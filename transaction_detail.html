@@ -1,0 +1,151 @@
+{% extends 'base.html' %}
+
+{% block title %}Transaction Details - Shopee Cashback{% endblock title %}
+
+{% block body %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'transactions' %}">Transactions</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Transaction #{{ transaction.id }}</li>
+            </ol>
+        </nav>
+        <h2>Transaction Details</h2>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Transaction #{{ transaction.id }}</h5>
+                <span class="badge 
+                    {% if transaction.status == 'pending' %}bg-warning text-dark
+                    {% elif transaction.status == 'approved' %}bg-success
+                    {% else %}bg-danger{% endif %}">
+                    {{ transaction.status|title }}
+                </span>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-4 fw-bold">Date:</div>
+                    <div class="col-md-8">{{ transaction.created_at|date:"F d, Y H:i" }}</div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-4 fw-bold">Product Name:</div>
+                    <div class="col-md-8">{{ transaction.product_name }}</div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-4 fw-bold">Product Price:</div>
+                    <div class="col-md-8">₱{{ transaction.product_price|floatformat:2 }}</div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-4 fw-bold">Estimated Commission:</div>
+                    <div class="col-md-8">₱{{ transaction.estimated_commission|floatformat:2 }}</div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-4 fw-bold">Cashback Amount:</div>
+                    <div class="col-md-8">
+                        <span class="fw-bold text-primary">₱{{ transaction.cashback_amount|floatformat:2 }}</span>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-4 fw-bold">Status:</div>
+                    <div class="col-md-8">
+                        {% if transaction.status == 'pending' %}
+                        <span class="badge bg-warning text-dark">Pending Review</span>
+                        <small class="d-block text-muted mt-1">We're verifying your purchase with Shopee.</small>
+                        {% elif transaction.status == 'approved' %}
+                        <span class="badge bg-success">Approved</span>
+                        <small class="d-block text-muted mt-1">Cashback has been added to your account.</small>
+                        {% else %}
+                        <span class="badge bg-danger">Rejected</span>
+                        <small class="d-block text-muted mt-1">We couldn't verify this purchase.</small>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-4 fw-bold">Last Updated:</div>
+                    <div class="col-md-8">{{ transaction.updated_at|date:"F d, Y H:i" }}</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Original Link</h5>
+            </div>
+            <div class="card-body">
+                <a href="{{ transaction.affiliate_link.original_link }}" target="_blank" class="text-break">
+                    {{ transaction.affiliate_link.original_link }}
+                </a>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Affiliate Link Used</h5>
+            </div>
+            <div class="card-body">
+                <a href="{{ transaction.affiliate_link.converted_link }}" target="_blank" class="text-break">
+                    {{ transaction.affiliate_link.converted_link }}
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Transaction Status</h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-group">
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>Link Converted</span>
+                        <i class="fas fa-check-circle text-success"></i>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>Purchase Confirmed</span>
+                        <i class="fas fa-check-circle text-success"></i>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>Verification</span>
+                        {% if transaction.status == 'pending' %}
+                        <i class="fas fa-clock text-warning"></i>
+                        {% elif transaction.status == 'approved' %}
+                        <i class="fas fa-check-circle text-success"></i>
+                        {% else %}
+                        <i class="fas fa-times-circle text-danger"></i>
+                        {% endif %}
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>Cashback Added</span>
+                        {% if transaction.status == 'approved' %}
+                        <i class="fas fa-check-circle text-success"></i>
+                        {% else %}
+                        <i class="fas fa-times-circle text-secondary"></i>
+                        {% endif %}
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Need Help?</h5>
+            </div>
+            <div class="card-body">
+                <p>If you have any questions about this transaction, please contact our support team.</p>
+                <div class="d-grid">
+                    <a href="mailto:support@shopeecashback.com" class="btn btn-outline-primary">
+                        <i class="fas fa-envelope me-2"></i> Contact Support
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock body %} 

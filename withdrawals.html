@@ -1,0 +1,146 @@
+{% extends 'base.html' %}
+
+{% block title %}Withdrawals - Shopee Cashback{% endblock title %}
+
+{% block body %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Withdrawals</li>
+            </ol>
+        </nav>
+        <h2>Your Withdrawals</h2>
+        <p class="lead">View and manage your cashback withdrawal requests.</p>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <div class="row align-items-center">
+            <div class="col">
+                <h5 class="mb-0">All Withdrawals</h5>
+            </div>
+            <div class="col-auto">
+                {% if user.profile.balance >= 100 %}
+                <a href="{% url 'request_withdrawal' %}" class="btn btn-sm btn-primary">
+                    <i class="fas fa-plus me-1"></i> New Withdrawal
+                </a>
+                {% else %}
+                <button class="btn btn-sm btn-secondary" disabled>
+                    <i class="fas fa-plus me-1"></i> Need ₱100 to withdraw
+                </button>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        {% if withdrawals %}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Date</th>
+                        <th>Amount</th>
+                        <th>Payment Method</th>
+                        <th>Status</th>
+                        <th>Processed Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for withdrawal in withdrawals %}
+                    <tr>
+                        <td>{{ withdrawal.id }}</td>
+                        <td>{{ withdrawal.requested_at|date:"M d, Y" }}</td>
+                        <td>₱{{ withdrawal.amount|floatformat:2 }}</td>
+                        <td>
+                            <span class="badge 
+                                {% if withdrawal.payment_method == 'gcash' %}bg-primary
+                                {% elif withdrawal.payment_method == 'paymaya' %}bg-info
+                                {% else %}bg-secondary{% endif %}">
+                                {{ withdrawal.get_payment_method_display }}
+                            </span>
+                        </td>
+                        <td>
+                            {% if withdrawal.status == 'pending' %}
+                            <span class="badge bg-warning text-dark">Pending</span>
+                            {% elif withdrawal.status == 'approved' %}
+                            <span class="badge bg-success">Approved</span>
+                            {% else %}
+                            <span class="badge bg-danger">Rejected</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if withdrawal.processed_at %}
+                            {{ withdrawal.processed_at|date:"M d, Y" }}
+                            {% else %}
+                            <span class="text-muted">-</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center py-5">
+            <i class="fas fa-money-check-alt fa-4x text-muted mb-3"></i>
+            <h4>No withdrawals yet</h4>
+            <p class="text-muted">You haven't made any withdrawal requests yet.</p>
+            {% if user.profile.balance >= 100 %}
+            <a href="{% url 'request_withdrawal' %}" class="btn btn-primary mt-2">Request Withdrawal</a>
+            {% else %}
+            <p class="mt-2">You need at least ₱100 to request a withdrawal.</p>
+            <a href="{% url 'link_converter' %}" class="btn btn-primary mt-2">Earn More Cashback</a>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Withdrawal Summary -->
+<div class="row mt-4">
+    <div class="col-md-4">
+        <div class="card bg-light">
+            <div class="card-body">
+                <h5 class="card-title">Pending Withdrawals</h5>
+                <h3>{{ withdrawals|dictsort:"status"|first }}</h3>
+                <p class="text-muted mb-0">Awaiting processing</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card bg-light">
+            <div class="card-body">
+                <h5 class="card-title">Completed Withdrawals</h5>
+                <h3>{{ withdrawals|dictsort:"status"|last }}</h3>
+                <p class="text-muted mb-0">Successfully processed</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card bg-light">
+            <div class="card-body">
+                <h5 class="card-title">Total Withdrawn</h5>
+                <h3>₱{{ total_withdrawn|default:"0.00"|floatformat:2 }}</h3>
+                <p class="text-muted mb-0">All time</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Information Section -->
+<div class="card mt-4 bg-light border-0">
+    <div class="card-body">
+        <h5><i class="fas fa-info-circle text-primary me-2"></i> Withdrawal Information</h5>
+        <ul class="mb-0">
+            <li>Minimum withdrawal amount is ₱100</li>
+            <li>Withdrawals are typically processed within 3-5 business days</li>
+            <li>You will receive a confirmation email once your withdrawal is processed</li>
+            <li>For any issues with your withdrawal, please contact our support team</li>
+        </ul>
+    </div>
+</div>
+{% endblock body %} 

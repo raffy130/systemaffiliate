@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Submit Transaction - Shopee Cashback{% endblock title %}
+
+{% block body %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'link_converter' %}">Convert Link</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Submit Transaction</li>
+            </ol>
+        </nav>
+        <h2>Submit Transaction</h2>
+        <p class="lead">Confirm your purchase to track your cashback.</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Purchase Details</h5>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info mb-4">
+                    <div class="d-flex">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-info-circle fa-2x me-3"></i>
+                        </div>
+                        <div>
+                            <h5 class="alert-heading">Please provide your purchase details</h5>
+                            <p class="mb-0">This information helps us verify your purchase and calculate your cashback.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    
+                    <div class="d-grid gap-2 mt-4">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-check-circle me-2"></i> Submit Transaction
+                        </button>
+                        <a href="{% url 'link_converter' %}" class="btn btn-outline-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Affiliate Link Used</h5>
+            </div>
+            <div class="card-body">
+                <p class="mb-2"><strong>Original Link:</strong></p>
+                <p class="text-break mb-3">
+                    <a href="{{ affiliate_link.original_link }}" target="_blank">
+                        {{ affiliate_link.original_link|truncatechars:50 }}
+                    </a>
+                </p>
+                
+                <p class="mb-2"><strong>Converted Link:</strong></p>
+                <p class="text-break">
+                    <a href="{{ affiliate_link.converted_link }}" target="_blank">
+                        {{ affiliate_link.converted_link|truncatechars:50 }}
+                    </a>
+                </p>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">How Cashback Works</h5>
+            </div>
+            <div class="card-body">
+                <ol class="mb-0">
+                    <li class="mb-2">Enter the product details from your purchase</li>
+                    <li class="mb-2">We'll calculate your estimated cashback (5% of our commission)</li>
+                    <li class="mb-2">Your transaction will be reviewed within 1-3 business days</li>
+                    <li>Once approved, the cashback will be added to your balance</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock body %} 

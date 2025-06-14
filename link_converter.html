@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Convert Shopee Link - Shopee Cashback{% endblock title %}
+
+{% block body %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <h2>Shopee Link Converter</h2>
+        <p class="lead">Convert your Shopee product links to earn cashback on your purchases.</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Convert Link</h5>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    <div class="d-grid gap-2 mt-4">
+                        <button type="submit" class="btn btn-primary">Convert Link</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        {% if affiliate_link %}
+        <div class="card mb-4">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">Your Affiliate Link is Ready!</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label class="form-label">Use this link to order and check out the product:</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" value="{{ affiliate_link.converted_link }}" id="affiliate-link" readonly>
+                        <button class="btn btn-outline-secondary" type="button" onclick="copyLink()">
+                            <i class="fas fa-copy"></i> Copy
+                        </button>
+                    </div>
+                </div>
+
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i> After completing your purchase, come back here to confirm your order and track your cashback.
+                </div>
+
+                <div class="card border-primary mt-4">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">Enter Product Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <p>To calculate your estimated cashback, please enter the product details:</p>
+                        <form method="post" action="{% url 'submit_transaction' affiliate_link.id %}">
+                            {% csrf_token %}
+                            {{ product_info_form|crispy }}
+                            <div class="d-grid gap-2 mt-3">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-check-circle me-2"></i> Done Checkout
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">How It Works</h5>
+            </div>
+            <div class="card-body">
+                <ol class="mb-0">
+                    <li class="mb-3">
+                        <strong>Paste your Shopee link</strong>
+                        <p class="small text-muted">Copy the product URL from Shopee and paste it above.</p>
+                    </li>
+                    <li class="mb-3">
+                        <strong>Get your affiliate link</strong>
+                        <p class="small text-muted">We'll convert it to an affiliate link that tracks your purchase.</p>
+                    </li>
+                    <li class="mb-3">
+                        <strong>Shop as usual</strong>
+                        <p class="small text-muted">Use the affiliate link to complete your purchase on Shopee.</p>
+                    </li>
+                    <li>
+                        <strong>Confirm your purchase</strong>
+                        <p class="small text-muted">Come back and click "Done Checkout" to track your cashback.</p>
+                    </li>
+                </ol>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Tips</h5>
+            </div>
+            <div class="card-body">
+                <ul class="mb-0">
+                    <li class="mb-2">Make sure to use the affiliate link for your purchase</li>
+                    <li class="mb-2">Complete the purchase in the same browsing session</li>
+                    <li>Don't forget to confirm your purchase after checkout</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+function copyLink() {
+    var copyText = document.getElementById("affiliate-link");
+    copyText.select();
+    copyText.setSelectionRange(0, 99999);
+    document.execCommand("copy");
+    
+    // Show copied message
+    alert("Link copied to clipboard!");
+}
+</script>
+{% endblock extra_js %}
+{% endblock body %} 

@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Request Withdrawal - Shopee Cashback{% endblock title %}
+
+{% block body %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Request Withdrawal</li>
+            </ol>
+        </nav>
+        <h2>Request Withdrawal</h2>
+        <p class="lead">Withdraw your earned cashback to your preferred payment method.</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Withdrawal Form</h5>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="alert alert-info mb-4">
+                        <div class="d-flex">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-info-circle fa-2x me-3"></i>
+                            </div>
+                            <div>
+                                <h5 class="alert-heading">Available Balance: ₱{{ balance|floatformat:2 }}</h5>
+                                <p class="mb-0">You can withdraw any amount between ₱100 and your available balance.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {{ form|crispy }}
+                    
+                    <div class="d-grid gap-2 mt-4">
+                        <button type="submit" class="btn btn-primary">Submit Withdrawal Request</button>
+                        <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Payment Methods</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-flex mb-3">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-mobile-alt fa-2x text-primary me-3"></i>
+                    </div>
+                    <div>
+                        <h6>GCash</h6>
+                        <p class="small text-muted mb-0">Enter your registered GCash mobile number</p>
+                    </div>
+                </div>
+                
+                <div class="d-flex mb-3">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-credit-card fa-2x text-primary me-3"></i>
+                    </div>
+                    <div>
+                        <h6>PayMaya</h6>
+                        <p class="small text-muted mb-0">Enter your registered PayMaya mobile number</p>
+                    </div>
+                </div>
+                
+                <div class="d-flex">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-university fa-2x text-primary me-3"></i>
+                    </div>
+                    <div>
+                        <h6>Bank Transfer</h6>
+                        <p class="small text-muted mb-0">Enter your bank name, account name, and account number</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Important Notes</h5>
+            </div>
+            <div class="card-body">
+                <ul class="mb-0">
+                    <li class="mb-2">Minimum withdrawal amount is ₱100</li>
+                    <li class="mb-2">Withdrawals are processed within 3-5 business days</li>
+                    <li class="mb-2">Ensure your payment details are correct</li>
+                    <li>There are no fees for withdrawals</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock body %} 

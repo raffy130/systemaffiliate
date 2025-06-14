@@ -1,0 +1,768 @@
+{% load crispy_forms_tags %}
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - eShopinoy Cashback</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet" 
+    integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+    :root {
+        --primary-color: #EE4D2D;
+        --secondary-color: #FF6B35;
+        --accent-color: #FF8F65;
+        --dark-color: #1a1a1a;
+        --light-gray: #f8f9fa;
+        --medium-gray: #6c757d;
+        --border-color: #e0e6ed;
+        --success-color: #10b981;
+        --error-color: #ef4444;
+        --shadow-light: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+        --shadow-medium: 0 4px 6px rgba(0, 0, 0, 0.07), 0 1px 3px rgba(0, 0, 0, 0.06);
+        --shadow-heavy: 0 20px 25px rgba(0, 0, 0, 0.15), 0 10px 10px rgba(0, 0, 0, 0.04);
+    }
+    
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    
+    body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        line-height: 1.6;
+        color: var(--dark-color);
+        overflow: auto;
+        height: 100vh;
+    }
+    
+    .login-container {
+        min-height: 100vh;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 30px;
+        background: linear-gradient(135deg, #ffeee6 0%, #fff5f2 100%);
+    }
+    
+    .login-card {
+        background: white;
+        overflow: hidden;
+        width: 90%;
+        max-width: 1200px;
+        display: flex;
+        flex-direction: row;
+        border-radius: 24px;
+        box-shadow: var(--shadow-heavy);
+        margin: 0 auto;
+    }   
+    
+    /* LEFT SIDE - Image/Branding */
+    .login-left {
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 50%, var(--accent-color) 100%);
+        padding: 60px 40px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        color: white;
+        position: relative;
+        flex: 0 0 50%;
+        overflow: hidden;
+    }
+    
+    .login-left::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: 
+            radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+            url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+        opacity: 0.4;
+    }
+    
+    .login-left > * {
+        position: relative;
+        z-index: 2;
+    }
+    
+    .cashback-icon {
+        width: 140px;
+        height: 140px;
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 32px;
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        transition: all 0.3s ease;
+        animation: float 6s ease-in-out infinite;
+    }
+    
+    @keyframes float {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-12px); }
+    }
+    
+    .cashback-icon i {
+        font-size: 4rem;
+        color: white;
+        filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+    }
+    
+    .login-left h1 {
+        font-size: 3rem;
+        font-weight: 800;
+        margin-bottom: 20px;
+        background: linear-gradient(45deg, #fff, rgba(255,255,255,0.8));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        line-height: 1.1;
+    }
+    
+    .login-left p {
+        font-size: 1.2rem;
+        margin-bottom: 40px;
+        opacity: 0.9;
+        font-weight: 400;
+        line-height: 1.6;
+        max-width: 350px;
+    }
+    
+    .features-showcase {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        max-width: 320px;
+        margin-top: 20px;
+    }
+    
+    .feature-item {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 12px 20px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        transition: all 0.3s ease;
+    }
+    
+    .feature-item:hover {
+        background: rgba(255, 255, 255, 0.15);
+        transform: translateX(8px);
+    }
+    
+    .feature-item i {
+        font-size: 1.2rem;
+        width: 20px;
+        text-align: center;
+    }
+    
+    .feature-item span {
+        font-size: 0.95rem;
+        font-weight: 500;
+    }
+    
+    .back-link {
+        position: absolute;
+        top: 24px;
+        left: 24px;
+        color: white;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        font-size: 0.9rem;
+        padding: 10px 18px;
+        border-radius: 25px;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(15px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .back-link:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: translateX(-6px);
+        color: white;
+        text-decoration: none;
+    }
+    
+    /* RIGHT SIDE - Form */
+    .login-right {
+        padding: 60px 50px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        flex: 0 0 50%;
+        background: white;
+        position: relative;
+    }
+    
+    .login-right::before {
+        content: '';
+        position: absolute;
+        top: -100px;
+        right: -100px;
+        width: 300px;
+        height: 300px;
+        background: radial-gradient(circle, rgba(238, 77, 45, 0.06) 0%, transparent 70%);
+        border-radius: 50%;
+        pointer-events: none;
+    }
+    
+    .login-form {
+        max-width: 420px;
+        margin: 0 auto;
+        width: 100%;
+        position: relative;
+        z-index: 2;
+    }
+    
+    .form-header {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+    
+    .form-header h2 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        color: var(--dark-color);
+        margin-bottom: 8px;
+        letter-spacing: -0.025em;
+    }
+    
+    .form-header p {
+        color: var(--medium-gray);
+        font-size: 1.05rem;
+        font-weight: 400;
+    }
+    
+    /* Enhanced Form Styles */
+    .form-group {
+        margin-bottom: 28px;
+        position: relative;
+    }
+    
+    .form-label {
+        display: block;
+        font-weight: 600;
+        color: var(--dark-color);
+        margin-bottom: 8px;
+        font-size: 0.9rem;
+        letter-spacing: 0.025em;
+    }
+    
+    /* Floating label form field */
+    .floating-label {
+        position: relative;
+        margin-bottom: 20px;
+    }
+    
+    .floating-label .form-control {
+        height: 60px;
+        padding: 20px 24px 12px 54px;
+        font-size: 16px;
+        border: 2px solid var(--border-color);
+        border-radius: 16px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        background: white;
+        color: var(--dark-color);
+        box-shadow: var(--shadow-light);
+        width: 100%;
+    }
+    
+    .floating-label .form-control:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 4px rgba(238, 77, 45, 0.1), var(--shadow-medium);
+        transform: translateY(-2px);
+    }
+    
+    .floating-label .form-label {
+        position: absolute;
+        top: 20px;
+        left: 54px;
+        font-size: 16px;
+        color: #9ca3af;
+        pointer-events: none;
+        transition: all 0.25s ease;
+        margin: 0;
+        font-weight: 400;
+    }
+    
+    .floating-label .form-control:focus ~ .form-label,
+    .floating-label .form-control:not(:placeholder-shown) ~ .form-label {
+        top: 8px;
+        left: 54px;
+        font-size: 12px;
+        color: var(--primary-color);
+        font-weight: 600;
+    }
+    
+    .floating-label .input-icon {
+        position: absolute;
+        left: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 10;
+        color: var(--medium-gray);
+        transition: all 0.3s ease;
+        font-size: 18px;
+    }
+    
+    .floating-label .form-control:focus ~ .input-icon {
+        color: var(--primary-color);
+    }
+    
+    .login-form .form-control::placeholder {
+        color: transparent;
+    }
+    
+    /* Forgot Password Link */
+    .forgot-password {
+        text-align: right;
+        margin: 5px 0 20px;
+    }
+    
+    .forgot-password a {
+        color: var(--medium-gray);
+        font-size: 14px;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        font-weight: 500;
+    }
+    
+    .forgot-password a:hover {
+        color: var(--primary-color);
+        text-decoration: underline;
+    }
+    
+    .btn-login {
+        width: 100%;
+        padding: 18px 32px;
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+        border: none;
+        border-radius: 16px;
+        color: white;
+        font-size: 16px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+        box-shadow: var(--shadow-medium);
+        text-transform: none;
+        margin-top: 16px;
+    }
+    
+    .btn-login::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: left 0.6s;
+    }
+    
+    .btn-login:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-heavy);
+        background: linear-gradient(135deg, #d63e1f 0%, #e55a2b 100%);
+    }
+    
+    .btn-login:hover::before {
+        left: 100%;
+    }
+    
+    .btn-login:active {
+        transform: translateY(-1px);
+    }
+    
+    .register-link {
+        text-align: center;
+        margin-top: 32px;
+        padding: 24px 32px;
+        background: white;
+        border-radius: 16px;
+        border: 1px solid var(--border-color);
+        box-shadow: var(--shadow-light);
+        transition: all 0.3s ease;
+    }
+    
+    .register-link:hover {
+        box-shadow: var(--shadow-medium);
+        transform: translateY(-2px);
+    }
+    
+    .register-link p {
+        margin: 0;
+        color: var(--medium-gray);
+        font-size: 0.95rem;
+    }
+    
+    .register-link a {
+        color: var(--primary-color);
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 1.05rem;
+        transition: all 0.3s ease;
+    }
+    
+    .register-link a:hover {
+        color: var(--secondary-color);
+        text-decoration: none;
+    }
+    
+    /* Modal Styles */
+    .modal-forgot {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 10000;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .modal-forgot.show {
+        display: flex;
+    }
+    
+    .modal-content {
+        background: white;
+        border-radius: 20px;
+        padding: 40px;
+        width: 90%;
+        max-width: 500px;
+        box-shadow: var(--shadow-heavy);
+        position: relative;
+        transform: translateY(-20px);
+        opacity: 0;
+        transition: all 0.3s ease;
+    }
+    
+    .modal-forgot.show .modal-content {
+        transform: translateY(0);
+        opacity: 1;
+    }
+    
+    .modal-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+    
+    .modal-header h3 {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--dark-color);
+        margin-bottom: 10px;
+    }
+    
+    .modal-header p {
+        color: var(--medium-gray);
+        font-size: 1rem;
+    }
+    
+    .modal-close {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        color: var(--medium-gray);
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .modal-close:hover {
+        color: var(--primary-color);
+        transform: rotate(90deg);
+    }
+    
+    .modal-body {
+        margin-bottom: 30px;
+    }
+    
+    .modal-footer {
+        display: flex;
+        justify-content: center;
+    }
+    
+    .btn-reset {
+        padding: 14px 30px;
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+        border: none;
+        border-radius: 12px;
+        color: white;
+        font-size: 16px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        box-shadow: var(--shadow-medium);
+        width: 100%;
+    }
+    
+    .btn-reset:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-heavy);
+        background: linear-gradient(135deg, #d63e1f 0%, #e55a2b 100%);
+    }
+    
+    /* RESPONSIVE FIXES */
+    @media (max-width: 1200px) {
+        .login-card {
+            width: 95%;
+        }
+        
+        .login-left,
+        .login-right {
+            padding: 40px 30px;
+        }
+        
+        .login-left h1 {
+            font-size: 2.5rem;
+        }
+        
+        .cashback-icon {
+            width: 120px;
+            height: 120px;
+        }
+        
+        .cashback-icon i {
+            font-size: 3.5rem;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .login-container {
+            padding: 20px;
+        }
+        
+        .login-card {
+            flex-direction: column !important;
+            width: 100%;
+            max-width: 500px;
+        }
+        
+        .login-left {
+            flex: 0 0 auto !important;
+            padding: 40px 20px;
+            border-radius: 24px 24px 0 0;
+        }
+        
+        .login-right {
+            flex: 0 0 auto !important;
+            padding: 40px 20px;
+            background: white;
+            border-radius: 0 0 24px 24px;
+        }
+        
+        .cashback-icon {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 16px;
+        }
+        
+        .cashback-icon i {
+            font-size: 2.5rem;
+        }
+        
+        .login-left h1 {
+            font-size: 1.8rem;
+            margin-bottom: 12px;
+        }
+        
+        .login-left p {
+            font-size: 1rem;
+            margin-bottom: 20px;
+        }
+        
+        .features-showcase {
+            display: none;
+        }
+        
+        .form-header h2 {
+            font-size: 1.8rem;
+        }
+        
+        .login-form {
+            max-width: 100%;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .login-container {
+            padding: 15px;
+        }
+        
+        .login-left {
+            padding: 30px 15px;
+        }
+        
+        .login-right {
+            padding: 30px 15px;
+        }
+        
+        .floating-label .form-control {
+            height: 55px;
+            padding: 20px 20px 12px 45px;
+        }
+        
+        .btn-login {
+            padding: 16px 24px;
+            font-size: 15px;
+        }
+        
+        .modal-content {
+            padding: 30px 20px;
+        }
+    }
+    </style>
+</head>
+<body>
+<div class="login-container">
+    <div class="login-card">
+        <!-- LEFT SIDE -->
+        <div class="login-left">
+            <a href="{% url 'home' %}" class="back-link">
+                <i class="fas fa-arrow-left me-2"></i> Back to Home
+            </a>
+            
+            <div class="cashback-icon">
+                <i class="fas fa-shopping-bag"></i>
+            </div>
+            
+            <h1>eShopinoy Cashback</h1>
+            <p>Sign in to access your cashback dashboard and start earning on your purchases.</p>
+            
+            <div class="features-showcase">
+                <div class="feature-item">
+                    <i class="fas fa-check"></i>
+                    <span>Free to join, no hidden fees</span>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-check"></i>
+                    <span>Earn on every purchase</span>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-check"></i>
+                    <span>Low minimum withdrawal: ₱100</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- RIGHT SIDE -->
+        <div class="login-right">
+            <div class="login-form">
+                <div class="form-header">
+                    <h2>Welcome Back</h2>
+                    <p>Sign in to continue to your dashboard</p>
+                </div>
+                
+                <form method="post" action="{% url 'login' %}" novalidate>
+                    {% csrf_token %}
+                    
+                    {% if form.non_field_errors %}
+                    <div class="alert alert-danger">
+                        {% for error in form.non_field_errors %}
+                        {{ error }}
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    
+                    <div class="mb-4">
+                        <label for="{{ form.username.id_for_label }}" class="form-label">Username or Email</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-user"></i></span>
+                            {{ form.username }}
+                        </div>
+                        {% if form.username.errors %}
+                        <div class="text-danger mt-1 small">
+                            {% for error in form.username.errors %}
+                            {{ error }}
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="{{ form.password.id_for_label }}" class="form-label">Password</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                            {{ form.password }}
+                        </div>
+                        {% if form.password.errors %}
+                        <div class="text-danger mt-1 small">
+                            {% for error in form.password.errors %}
+                            {{ error }}
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-4 d-flex justify-content-between align-items-center">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="rememberMe">
+                            <label class="form-check-label" for="rememberMe">Remember me</label>
+                        </div>
+                        <a href="#" class="forgot-link">Forgot password?</a>
+                    </div>
+                    
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg">Sign In</button>
+                    </div>
+                    
+                    <div class="text-center mt-4">
+                        <p class="mb-0">
+                            Don't have an account? 
+                            <a href="{% url 'register' %}" class="signup-link">Sign up</a>
+                        </p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add 'form-control' class to all form inputs
+    const inputs = document.querySelectorAll('input[type="text"], input[type="password"], input[type="email"]');
+    inputs.forEach(input => {
+        input.classList.add('form-control');
+    });
+});
+</script>
+
+<!-- Bootstrap JS Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js" 
+integrity="sha384-RML52PpFkGn2KmxdZngInwrYD59rOT7xoCrof9t7ivegAFbBDmS068cKMnhGIgL" crossorigin="anonymous"></script>
+</body>
+</html>

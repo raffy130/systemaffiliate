@@ -1,0 +1,182 @@
+{% extends 'base.html' %}
+
+{% block title %}Transactions - Shopee Cashback{% endblock title %}
+
+{% block body %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Transactions</li>
+            </ol>
+        </nav>
+        <h2>Your Transactions</h2>
+        <p class="lead">View and manage all your Shopee cashback transactions.</p>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <div class="row align-items-center">
+            <div class="col">
+                <h5 class="mb-0">All Transactions</h5>
+            </div>
+            <div class="col-auto">
+                <a href="{% url 'link_converter' %}" class="btn btn-sm btn-primary">
+                    <i class="fas fa-plus me-1"></i> New Transaction
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        {% if transactions %}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Date</th>
+                        <th>Product</th>
+                        <th>Price</th>
+                        <th>Cashback</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for transaction in transactions %}
+                    <tr>
+                        <td>{{ transaction.id }}</td>
+                        <td>{{ transaction.created_at|date:"M d, Y" }}</td>
+                        <td>{{ transaction.product_name|truncatechars:30 }}</td>
+                        <td>₱{{ transaction.product_price|floatformat:2 }}</td>
+                        <td>₱{{ transaction.cashback_amount|floatformat:2 }}</td>
+                        <td>
+                            {% if transaction.status == 'pending' %}
+                            <span class="badge bg-warning text-dark">Pending</span>
+                            {% elif transaction.status == 'approved' %}
+                            <span class="badge bg-success">Approved</span>
+                            {% else %}
+                            <span class="badge bg-danger">Rejected</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{% url 'transaction_detail' transaction.id %}" class="btn btn-sm btn-outline-primary" title="View">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteTransactionModal" data-transaction-url="{% url 'delete_transaction' transaction.id %}" data-transaction-status="{{ transaction.status }}" title="Delete">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center py-5">
+            <i class="fas fa-shopping-cart fa-4x text-muted mb-3"></i>
+            <h4>No transactions yet</h4>
+            <p class="text-muted">You haven't made any purchases through our affiliate links yet.</p>
+            <a href="{% url 'link_converter' %}" class="btn btn-primary mt-2">Convert a Link Now</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Transaction Summary -->
+<div class="row mt-4">
+    <div class="col-md-4">
+        <div class="card bg-light">
+            <div class="card-body">
+                <h5 class="card-title">Pending Transactions</h5>
+                <h3>{{ transactions|dictsort:"status"|first }}</h3>
+                <p class="text-muted mb-0">Awaiting verification</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card bg-light">
+            <div class="card-body">
+                <h5 class="card-title">Approved Transactions</h5>
+                <h3>{{ transactions|dictsort:"status"|last }}</h3>
+                <p class="text-muted mb-0">Cashback earned</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card bg-light">
+            <div class="card-body">
+                <h5 class="card-title">Total Transactions</h5>
+                <h3>{{ transactions|length }}</h3>
+                <p class="text-muted mb-0">All time</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Tips Section -->
+<div class="card mt-4 bg-light border-0">
+    <div class="card-body">
+        <h5><i class="fas fa-lightbulb text-warning me-2"></i> Tips</h5>
+        <ul class="mb-0">
+            <li>Transactions typically take 1-3 business days to verify</li>
+            <li>Make sure to use your affiliate link for the entire checkout process</li>
+            <li>Always confirm your purchase after checkout to track your cashback</li>
+        </ul>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteTransactionModal" tabindex="-1" aria-labelledby="deleteTransactionModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteTransactionModalLabel">Confirm Deletion</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete this transaction?</p>
+                <div class="alert alert-warning" id="approved-warning" style="display: none;">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    This transaction was approved. Deleting it will deduct the cashback amount from your available balance.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form id="deleteTransactionForm" method="post" action="">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock body %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var deleteModal = document.getElementById('deleteTransactionModal');
+    if (deleteModal) {
+        deleteModal.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget;
+            var transactionUrl = button.getAttribute('data-transaction-url');
+            var transactionStatus = button.getAttribute('data-transaction-status');
+
+            var modalForm = deleteModal.querySelector('#deleteTransactionForm');
+            modalForm.setAttribute('action', transactionUrl);
+
+            var warningDiv = deleteModal.querySelector('#approved-warning');
+            if (transactionStatus === 'approved') {
+                warningDiv.style.display = 'block';
+            } else {
+                warningDiv.style.display = 'none';
+            }
+        });
+    }
+});
+</script>
+{% endblock extra_js %} 

@@ -1,0 +1,659 @@
+{% load crispy_forms_tags %}
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - eShopinoy Cashback</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet" 
+    integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+:root {
+    --primary-color: #EE4D2D;
+    --secondary-color: #FF6B35;
+    --accent-color: #FF8F65;
+    --dark-color: #1a1a1a;
+    --light-gray: #f8f9fa;
+    --medium-gray: #6c757d;
+    --border-color: #e0e6ed;
+    --success-color: #10b981;
+    --error-color: #ef4444;
+    --shadow-light: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+    --shadow-medium: 0 4px 6px rgba(0, 0, 0, 0.07), 0 1px 3px rgba(0, 0, 0, 0.06);
+    --shadow-heavy: 0 20px 25px rgba(0, 0, 0, 0.15), 0 10px 10px rgba(0, 0, 0, 0.04);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    line-height: 1.6;
+    color: var(--dark-color);
+    overflow: auto;
+    height: 100vh;
+}
+
+.register-container {
+    min-height: 100vh;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 30px;
+    background: linear-gradient(135deg, #ffeee6 0%, #fff5f2 100%);
+}
+
+.register-card {
+    background: white;
+    overflow: hidden;
+    width: 90%;
+    max-width: 1200px;
+    display: flex;
+    flex-direction: row;
+    border-radius: 24px;
+    box-shadow: var(--shadow-heavy);
+    margin: 0 auto;
+}
+
+/* LEFT SIDE - Image/Branding */
+.register-left {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 50%, var(--accent-color) 100%);
+    padding: 60px 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: white;
+    position: relative;
+    flex: 0 0 50%;
+    overflow: hidden;
+}
+
+.register-left::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+    opacity: 0.4;
+}
+
+.register-left > * {
+    position: relative;
+    z-index: 2;
+}
+
+.cashback-icon {
+    width: 140px;
+    height: 140px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 32px;
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+    animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-12px); }
+}
+
+.cashback-icon i {
+    font-size: 4rem;
+    color: white;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+}
+
+.register-left h2 {
+    font-size: 3rem;
+    font-weight: 800;
+    margin-bottom: 20px;
+    background: linear-gradient(45deg, #fff, rgba(255,255,255,0.8));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    line-height: 1.1;
+}
+
+.register-left p {
+    font-size: 1.2rem;
+    margin-bottom: 40px;
+    opacity: 0.9;
+    font-weight: 400;
+    line-height: 1.6;
+    max-width: 350px;
+}
+
+.features {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-width: 320px;
+    margin-top: 20px;
+}
+
+.feature-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 12px 20px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    transition: all 0.3s ease;
+}
+
+.feature-item:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateX(8px);
+}
+
+.feature-item i {
+    font-size: 1.2rem;
+    width: 20px;
+    text-align: center;
+}
+
+.feature-item span {
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+.back-link {
+    position: absolute;
+    top: 24px;
+    left: 24px;
+    color: white;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+    padding: 10px 18px;
+    border-radius: 25px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.back-link:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateX(-6px);
+    color: white;
+    text-decoration: none;
+}
+
+/* RIGHT SIDE - Form */
+.register-right {
+    padding: 40px 50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex: 0 0 50%;
+    background: white;
+    position: relative;
+    overflow-y: auto;
+}
+
+.register-right::before {
+    content: '';
+    position: absolute;
+    top: -100px;
+    right: -100px;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(238, 77, 45, 0.06) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.form-section {
+    margin-bottom: 25px;
+}
+
+.form-section h6 {
+    color: var(--dark-color);
+    font-weight: 600;
+    margin-bottom: 15px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #f0f0f0;
+    font-size: 0.9rem;
+    letter-spacing: 0.025em;
+}
+
+.form-control {
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    padding: 10px 12px;
+    font-size: 14px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    margin-bottom: 15px;
+}
+
+.form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(238, 77, 45, 0.25);
+    transform: translateY(-2px);
+    outline: none;
+}
+
+.btn-register {
+    width: 100%;
+    padding: 18px 32px;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    border: none;
+    border-radius: 16px;
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--shadow-medium);
+    text-transform: none;
+    margin-top: 16px;
+}
+
+.btn-register::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.6s;
+}
+
+.btn-register:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-heavy);
+    background: linear-gradient(135deg, #d63e1f 0%, #e55a2b 100%);
+}
+
+.btn-register:hover::before {
+    left: 100%;
+}
+
+.btn-register:active {
+    transform: translateY(-1px);
+}
+
+.terms-checkbox {
+    margin: 20px 0;
+    padding: 15px;
+    background: var(--light-gray);
+    border-radius: 12px;
+    border-left: 4px solid var(--primary-color);
+}
+
+.login-link {
+    text-align: center;
+    margin-top: 32px;
+    padding: 24px 32px;
+    background: white;
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-light);
+    transition: all 0.3s ease;
+}
+
+.login-link:hover {
+    box-shadow: var(--shadow-medium);
+    transform: translateY(-2px);
+}
+
+.login-link p {
+    margin: 0;
+    color: var(--medium-gray);
+    font-size: 0.95rem;
+}
+
+.login-link a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+}
+
+.login-link a:hover {
+    color: var(--secondary-color);
+    text-decoration: none;
+}
+
+.info-alert {
+    background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+    border: none;
+    border-radius: 12px;
+    color: #333;
+    padding: 15px;
+    margin-bottom: 20px;
+    font-size: 0.9rem;
+    border-left: 4px solid var(--primary-color);
+}
+
+/* Modal Styles */
+.modal-content {
+    border: none;
+    border-radius: 20px;
+    box-shadow: var(--shadow-heavy);
+}
+
+.modal-header {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    color: white;
+    border-bottom: none;
+    border-radius: 20px 20px 0 0;
+    padding: 25px 30px;
+}
+
+.modal-title {
+    font-weight: 600;
+    font-size: 1.5rem;
+}
+
+.btn-close {
+    filter: invert(1);
+    opacity: 0.8;
+}
+
+.btn-close:hover {
+    opacity: 1;
+}
+
+.modal-body {
+    padding: 30px;
+    line-height: 1.6;
+}
+
+.modal-body h6 {
+    color: #333;
+    font-weight: 600;
+    margin-top: 25px;
+    margin-bottom: 15px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #f0f0f0;
+}
+
+.modal-body h6:first-child {
+    margin-top: 0;
+}
+
+.modal-footer {
+    border-top: 1px solid #e9ecef;
+    padding: 20px 30px;
+}
+
+/* RESPONSIVE FIXES */
+@media (max-width: 1200px) {
+    .register-card {
+        width: 95%;
+    }
+    
+    .register-left,
+    .register-right {
+        padding: 40px 30px;
+    }
+    
+    .register-left h2 {
+        font-size: 2.5rem;
+    }
+    
+    .cashback-icon {
+        width: 120px;
+        height: 120px;
+    }
+    
+    .cashback-icon i {
+        font-size: 3.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .register-container {
+        padding: 20px;
+    }
+    
+    .register-card {
+        flex-direction: column !important;
+        width: 100%;
+        max-width: 500px;
+    }
+    
+    .register-left {
+        flex: 0 0 auto !important;
+        padding: 40px 20px;
+        border-radius: 24px 24px 0 0;
+    }
+    
+    .register-right {
+        flex: 0 0 auto !important;
+        padding: 40px 20px;
+        background: white;
+        border-radius: 0 0 24px 24px;
+    }
+    
+    .cashback-icon {
+        width: 80px;
+        height: 80px;
+        margin-bottom: 16px;
+    }
+    
+    .cashback-icon i {
+        font-size: 2.5rem;
+    }
+    
+    .register-left h2 {
+        font-size: 1.8rem;
+        margin-bottom: 12px;
+    }
+    
+    .register-left p {
+        font-size: 1rem;
+        margin-bottom: 20px;
+    }
+    
+    .features {
+        display: none;
+    }
+}
+
+@media (max-width: 480px) {
+    .register-container {
+        padding: 15px;
+    }
+    
+    .register-left {
+        padding: 30px 15px;
+    }
+    
+    .register-right {
+        padding: 30px 15px;
+    }
+    
+    .btn-register {
+        padding: 16px 24px;
+        font-size: 15px;
+    }
+}
+    </style>
+</head>
+<body>
+<div class="register-container">
+    <div class="register-card">
+        <!-- Left Side with Image/Illustration -->
+        <div class="register-left">
+            <a href="{% url 'home' %}" class="back-link">
+                <i class="fas fa-arrow-left me-2"></i> Back to Home
+            </a>
+            
+            <div class="cashback-icon">
+                <i class="fas fa-coins"></i>
+            </div>
+            
+            <h2>Start Earning Cashback Today!</h2>
+            <p>Join thousands of users who are already earning money back on their Shopee purchases.</p>
+            
+            <div class="features">
+                <div class="feature-item">
+                    <i class="fas fa-check-circle"></i>
+                    <span>5% Cashback on Every Purchase</span>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-check-circle"></i>
+                    <span>Fast & Secure Withdrawals</span>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-check-circle"></i>
+                    <span>No Hidden Fees</span>
+                </div>
+            </div>
+            
+            <img src="{% static 'img/shopping-illustration.svg' %}" 
+                 alt="Shopping Illustration" 
+                 class="img-fluid mt-4" 
+                 style="max-width: 85%; opacity: 0.9;" 
+                 onerror="this.style.display='none';">
+        </div>
+        
+        <!-- Right Side with Form -->
+        <div class="register-right">
+            <div class="text-center mb-4">
+                <h3 class="text-dark h2 mb-1 fw-bold">Create Your Account</h3>
+                <p class="text-muted">Fill in your details to get started</p>
+            </div>
+            
+            {% if messages %}
+            <div class="alert alert-danger">
+                <ul class="mb-0">
+                    {% for message in messages %}
+                    <li>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+            
+            <form method="post" action="{% url 'register' %}">
+                {% csrf_token %}
+                
+                <!-- Two Column Form Layout -->
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-section">
+                            <h6><i class="fas fa-user me-2"></i>Account Information</h6>
+                            {{ user_form|crispy }}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-section">
+                            <h6><i class="fas fa-address-card me-2"></i>Contact Information</h6>
+                            {{ profile_form|crispy }}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Info Alert Below Form -->
+                <div class="info-alert">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <strong>Note:</strong> Your phone number will be used for secure payment processing and account verification.
+                </div>
+                
+                <!-- Terms and Button Below -->
+                <div class="terms-checkbox">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="terms" name="terms" required>
+                        <label class="form-check-label" for="terms">
+                            I agree to the <a href="#" data-bs-toggle="modal" data-bs-target="#termsModal" class="text-decoration-none">Terms and Conditions</a> and <a href="#" class="text-decoration-none">Privacy Policy</a>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary btn-register">
+                        <i class="fas fa-user-plus me-2"></i>Create My Account
+                    </button>
+                </div>
+            </form>
+            
+            <div class="login-link">
+                <p class="mb-2">Already have an account?</p>
+                <a href="{% url 'login' %}">
+                    Sign In Here
+                    <i class="fas fa-arrow-right ms-1"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Enhanced Terms and Conditions Modal -->
+<div class="modal fade" id="termsModal" tabindex="-1" aria-labelledby="termsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="termsModalLabel">Terms and Conditions</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h6>1. Acceptance of Terms</h6>
+                <p>By registering for an account, you agree to be bound by these Terms and Conditions and our Privacy Policy.</p>
+                
+                <h6>2. Cashback Program</h6>
+                <p>eShopinoy Cashback is a service that offers users cashback rewards for purchases made through our affiliate links. We do not sell products directly.</p>
+                
+                <h6>3. Account Registration</h6>
+                <p>To use our services, you must create an account with accurate and complete information. You are responsible for maintaining the confidentiality of your account details.</p>
+                
+                <h6>4. Cashback Earnings and Withdrawals</h6>
+                <p>Cashback is calculated based on the confirmed purchase amount. The minimum withdrawal amount is ₱100. Withdrawals typically process within 3-7 business days.</p>
+                
+                <h6>5. Prohibited Activities</h6>
+                <p>You may not use our service to engage in any illegal activities or violate any laws. We reserve the right to suspend or terminate accounts engaged in suspicious activity.</p>
+                
+                <h6>6. Changes to Terms</h6>
+                <p>We reserve the right to modify these terms at any time. Changes will be effective immediately upon posting on our website.</p>
+                
+                <h6>7. Limitation of Liability</h6>
+                <p>eShopinoy Cashback shall not be liable for any indirect, incidental, special, consequential, or punitive damages, or any loss of profits or revenues.</p>
+                
+                <h6>8. Governing Law</h6>
+                <p>These Terms shall be governed by the laws of the Philippines, without regard to its conflict of law provisions.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">I Understand</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js" 
+integrity="sha384-RML52PpFkGn2KmxdZngInwrYD59rOT7xoCrof9t7ivegAFbBDmS068cKMnhGIgL" crossorigin="anonymous"></script>
+</body>
+</html>

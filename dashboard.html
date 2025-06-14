@@ -1,0 +1,386 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - Shopee Cashback{% endblock title %}
+
+{% block body %}
+<!-- Hero section with gradient background -->
+<div class="dashboard-hero bg-gradient-primary p-4 rounded-3 mb-4 shadow-sm">
+    <div class="container-fluid px-0">  
+        <div class="row align-items-center">
+            <div class="col-md-7">
+                <h1 class="display-5 fw-bold text-white mb-1">Welcome back, {{ user.username }}!</h1>
+                <p class="lead text-white-50 mb-0">Your cashback dashboard summary</p>
+            </div>
+            <div class="col-md-5 text-md-end">
+                <a href="{% url 'link_converter' %}" class="btn btn-light btn-lg shadow-sm">
+                    <i class="fas fa-link me-2"></i> Convert New Link
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Stats Cards -->
+<div class="dashboard-stats mb-4">
+    <div class="row g-3">
+        <div class="col-md">
+            <div class="card h-100 border-0 shadow-sm hover-card">
+                <div class="card-body available-balance position-relative p-4">
+                    <div class="icon-bg rounded-circle bg-light-primary mb-3">
+                        <i class="fas fa-wallet fa-lg text-primary"></i>
+                    </div>
+                    <h6 class="text-dark fw-normal mb-2">Available Balance</h6>
+                    <h2 class="mb-3 fw-bold text-dark"><span class="currency-symbol">₱</span>{{ available_balance|floatformat:2 }}</h2>
+                    {% if profile.balance >= 100 %}
+                    <a href="{% url 'request_withdrawal' %}" class="btn btn-primary w-100">Request Withdrawal</a>
+                    {% else %}
+                    <div class="min-withdrawal alert alert-light border-0 text-center mt-2 p-2">
+                        <small class="text-dark"><i class="fas fa-info-circle me-1"></i> Minimum ₱100 for withdrawal</small>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col-md">
+            <div class="card h-100 border-0 shadow-sm hover-card">
+                <div class="card-body total-earned position-relative p-4">
+                    <div class="icon-bg rounded-circle bg-light-success mb-3">
+                        <i class="fas fa-coins fa-lg text-success"></i>
+                    </div>
+                    <h6 class="text-dark fw-normal mb-2">Total Earnings</h6>
+                    <h2 class="mb-3 fw-bold text-dark"><span class="currency-symbol">₱</span>{{ total_cashback|floatformat:2 }}</h2>
+                    <div class="text-dark">
+                        <i class="fas fa-chart-line me-1"></i> From {{ transaction_count }} approved orders
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md">
+            <div class="card h-100 border-0 shadow-sm hover-card">
+                <div class="card-body orders-processed position-relative p-4">
+                    <div class="icon-bg rounded-circle bg-light-info mb-3">
+                        <i class="fas fa-shopping-bag fa-lg text-info"></i>
+                    </div>
+                    <h6 class="text-dark fw-normal mb-2">Orders Processed</h6>
+                    <h2 class="mb-3 fw-bold text-dark">{{ total_orders }}</h2>
+                    <a href="{% url 'transactions' %}" class="stretched-link text-decoration-none text-dark small">
+                        View all <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md">
+            <div class="card h-100 border-0 shadow-sm hover-card">
+                <div class="card-body pending-review position-relative p-4">
+                    <div class="icon-bg rounded-circle bg-light-warning mb-3">
+                        <i class="fas fa-clock fa-lg text-warning"></i>
+                    </div>
+                    <h6 class="text-dark fw-normal mb-2">Pending Review</h6>
+                    <h2 class="mb-3 fw-bold text-dark">{{ pending_count }}</h2>
+                    <a href="{% url 'transactions' %}" class="stretched-link text-decoration-none text-dark small">
+                        View details <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md">
+            <div class="card h-100 border-0 shadow-sm hover-card">
+                <div class="card-body links-generated position-relative p-4">
+                    <div class="icon-bg rounded-circle bg-light-purple mb-3">
+                        <i class="fas fa-link fa-lg text-purple"></i>
+                    </div>
+                    <h6 class="text-dark fw-normal mb-2">Links Generated</h6>
+                    <h2 class="mb-3 fw-bold text-dark">{{ link_count }}</h2>
+                    <a href="{% url 'affiliate_links' %}" class="stretched-link text-decoration-none text-dark small">
+                        View all <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    {% if user.is_staff %}
+    <div class="row mt-3">
+        <div class="col-md-12">
+            <div class="card h-100 border-0 shadow-sm hover-card">
+                <div class="card-body admin-actions p-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="d-flex align-items-center">
+                            <div class="icon-bg rounded-circle bg-light-danger me-3">
+                                <i class="fas fa-shield-alt fa-lg text-danger"></i>
+                            </div>
+                            <h5 class="fw-semibold mb-0 text-dark">Admin Panel</h5>
+                        </div>
+                        <div>
+                            <a href="#" class="btn btn-primary btn-sm me-2">View All Users</a>
+                            <a href="#" class="btn btn-outline-secondary btn-sm">Overall Stats</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Quick Actions -->
+<div class="quick-actions-section mb-4">
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-0">
+            <div class="row g-0">
+                <div class="col-md-3 quick-action-item">
+                    <a href="{% url 'link_converter' %}" class="d-flex flex-column align-items-center p-4 text-decoration-none text-dark">
+                        <div class="icon-wrapper mb-3">
+                            <i class="fas fa-link fa-2x text-primary"></i>
+                        </div>
+                        <span class="fw-medium">Convert Link</span>
+                    </a>
+                </div>
+                <div class="col-md-3 quick-action-item">
+                    <a href="{% url 'transactions' %}" class="d-flex flex-column align-items-center p-4 text-decoration-none text-dark">
+                        <div class="icon-wrapper mb-3">
+                            <i class="fas fa-history fa-2x text-secondary"></i>
+                        </div>
+                        <span class="fw-medium">Transaction History</span>
+                    </a>
+                </div>
+                <div class="col-md-3 quick-action-item">
+                    <a href="{% url 'affiliate_links' %}" class="d-flex flex-column align-items-center p-4 text-decoration-none text-dark">
+                        <div class="icon-wrapper mb-3">
+                            <i class="fas fa-list-ul fa-2x text-info"></i>
+                        </div>
+                        <span class="fw-medium">View All Links</span>
+                    </a>
+                </div>
+                <div class="col-md-3 quick-action-item">
+                    <a href="{% url 'request_withdrawal' %}" class="d-flex flex-column align-items-center p-4 text-decoration-none text-dark">
+                        <div class="icon-wrapper mb-3">
+                            <i class="fas fa-money-bill-wave fa-2x text-success"></i>
+                        </div>
+                        <span class="fw-medium">Request Withdrawal</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Transactions & Top Products -->
+<div class="row g-4 mb-4">
+    <div class="col-md-8">
+        <div class="card border-0 shadow-sm transactions-section h-100">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center p-3 border-bottom border-light">
+                <h5 class="mb-0 fw-semibold text-dark">Recent Transactions</h5>
+                <a href="{% url 'transactions' %}" class="btn btn-sm btn-outline-primary rounded-pill px-3">
+                    View All <i class="fas fa-arrow-right ms-1"></i>
+                </a>
+            </div>
+            <div class="card-body p-0">
+                {% if recent_transactions %}
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="ps-3 text-dark">Date</th>
+                                <th class="text-dark">Product</th>
+                                <th class="text-dark">Status</th>
+                                <th class="text-end pe-3 text-dark">Cashback</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for transaction in recent_transactions %}
+                            <tr>
+                                <td class="ps-3">
+                                    <div class="d-flex align-items-center">
+                                        <div class="date-icon me-2 bg-light rounded p-2 text-center">
+                                            <small class="d-block text-uppercase text-dark">{{ transaction.created_at|date:"M" }}</small>
+                                            <span class="fw-bold text-dark">{{ transaction.created_at|date:"d" }}</span>
+                                        </div>
+                                        <span class="text-dark small">{{ transaction.created_at|date:"Y" }}</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <a href="{% url 'transaction_detail' transaction.id %}" class="text-decoration-none text-dark product-link">
+                                        {{ transaction.product_name|truncatechars:30 }}
+                                    </a>
+                                </td>
+                                <td>
+                                    {% if transaction.status == 'pending' %}
+                                    <span class="badge rounded-pill bg-light text-warning border border-warning-subtle px-3 py-2">
+                                        <i class="fas fa-clock me-1"></i> Pending
+                                    </span>
+                                    {% elif transaction.status == 'approved' %}
+                                    <span class="badge rounded-pill bg-light text-success border border-success-subtle px-3 py-2">
+                                        <i class="fas fa-check-circle me-1"></i> Approved
+                                    </span>
+                                    {% else %}
+                                    <span class="badge rounded-pill bg-light text-danger border border-danger-subtle px-3 py-2">
+                                        <i class="fas fa-times-circle me-1"></i> Rejected
+                                    </span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-end fw-bold pe-3 text-dark">₱{{ transaction.cashback_amount|floatformat:2 }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="empty-state text-center py-5">
+                    <div class="empty-icon-wrapper mb-3">
+                        <i class="fas fa-shopping-cart fa-3x text-dark"></i>
+                    </div>
+                    <h5 class="fw-light mb-3 text-dark">No transactions yet</h5>
+                    <a href="{% url 'link_converter' %}" class="btn btn-primary btn-sm rounded-pill px-3 py-1 shadow-sm">
+                        <i class="fas fa-plus me-1"></i> Convert Your First Link
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm top-products-section h-100">
+            <div class="card-header bg-white p-3 border-bottom border-light">
+                <h5 class="mb-0 fw-semibold text-dark">Top Products</h5>
+            </div>
+            <div class="card-body">
+                {% if top_products %}
+                <ul class="list-group list-group-flush top-product-list">
+                    {% for product in top_products %}
+                    <li class="list-group-item px-0 py-3 border-bottom">
+                        <a href="{% url 'transaction_detail' product.id %}" class="text-decoration-none">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="product-info">
+                                    <h6 class="mb-1 text-dark">{{ product.product_name|truncatechars:30 }}</h6>
+                                    <small class="text-dark"><i class="fas fa-calendar-alt me-1"></i> {{ product.created_at|date:"M d, Y" }}</small>
+                                </div>
+                                <div class="product-cashback">
+                                    <span class="badge rounded-pill bg-primary-subtle text-primary px-3 py-2 fw-medium">
+                                        ₱{{ product.cashback_amount|floatformat:2 }}
+                                    </span>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <div class="empty-state text-center py-5">
+                    <div class="empty-icon-wrapper mb-3">
+                        <i class="fas fa-trophy fa-3x text-dark"></i>
+                    </div>
+                    <h5 class="fw-light mb-0 text-dark">No product data available yet</h5>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Pending Withdrawals & Tips -->
+<div class="row g-4 mb-4">
+    <!-- Pending Withdrawals -->
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm withdrawals-section h-100">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center p-3 border-bottom border-light">
+                <h5 class="mb-0 fw-semibold text-dark">Pending Withdrawals</h5>
+                <a href="{% url 'withdrawals' %}" class="btn btn-sm btn-outline-primary rounded-pill px-3">
+                    View All <i class="fas fa-arrow-right ms-1"></i>
+                </a>
+            </div>
+            <div class="card-body">
+                {% if pending_withdrawals %}
+                <div class="withdrawal-list">
+                    {% for withdrawal in pending_withdrawals %}
+                    <div class="withdrawal-item p-3 mb-2 bg-light rounded-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="withdrawal-details">
+                                <div class="d-flex align-items-center">
+                                    <div class="icon-container me-3">
+                                        <i class="fas fa-money-bill-wave text-success fs-4"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-1 fw-bold text-dark">₱{{ withdrawal.amount|floatformat:2 }}</h6>
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-calendar-alt text-dark me-2 small"></i>
+                                            <small class="text-dark">{{ withdrawal.requested_at|date:"M d, Y" }}</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <span class="badge rounded-pill bg-light text-warning border border-warning-subtle px-3 py-2">
+                                <i class="fas fa-clock me-1"></i> Pending
+                            </span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="empty-state text-center py-4">
+                    <div class="empty-icon-wrapper mb-3">
+                        <i class="fas fa-money-check-alt fa-3x text-dark"></i>
+                    </div>
+                    <h5 class="fw-light text-dark">No pending withdrawal requests</h5>
+                    <p class="text-dark">Your processed withdrawal requests will appear here</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Tips Section -->
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-white p-3 border-bottom border-light">
+                <h5 class="mb-0 fw-semibold text-dark">Tips to Maximize Your Cashback</h5>
+            </div>
+            <div class="card-body">
+                <div class="tips-container">
+                    <div class="tip-item mb-3 p-3 border-start border-4 border-primary bg-light rounded-end">
+                        <div class="d-flex">
+                            <div class="tip-icon me-3">
+                                <i class="fas fa-share-alt fa-lg text-primary"></i>
+                            </div>
+                            <div class="tip-content">
+                                <p class="mb-0 text-dark">Share your affiliate links with friends and family to increase your conversions.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tip-item mb-3 p-3 border-start border-4 border-success bg-light rounded-end">
+                        <div class="d-flex">
+                            <div class="tip-icon me-3">
+                                <i class="fas fa-tags fa-lg text-success"></i>
+                            </div>
+                            <div class="tip-content">
+                                <p class="mb-0 text-dark">Look for Shopee sale events for higher commissions and better conversion rates.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tip-item mb-3 p-3 border-start border-4 border-info bg-light rounded-end">
+                        <div class="d-flex">
+                            <div class="tip-icon me-3">
+                                <i class="fas fa-gem fa-lg text-info"></i>
+                            </div>
+                            <div class="tip-content">
+                                <p class="mb-0 text-dark">Convert links for high-value items for better cashback returns.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tip-item p-3 border-start border-4 border-warning bg-light rounded-end">
+                        <div class="d-flex">
+                            <div class="tip-icon me-3">
+                                <i class="fas fa-check-circle fa-lg text-warning"></i>
+                            </div>
+                            <div class="tip-content">
+                                <p class="mb-0 text-dark">Always confirm your purchases after checkout to ensure cashback tracking.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock body %} 
